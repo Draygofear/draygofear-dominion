@@ -13,6 +13,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      overflow-x: hidden;
     }
 
     .navbar {
@@ -81,6 +82,21 @@
       border-radius: 6px;
       border: none;
     }
+
+    .firework {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: yellow;
+      border-radius: 50%;
+      animation: explode 1s ease-out forwards;
+      z-index: 9999;
+    }
+
+    @keyframes explode {
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(5); opacity: 0; }
+    }
   </style>
 </head>
 <body>
@@ -102,7 +118,17 @@
       <option value="hard">Vs Computer (Hard)</option>
     </select>
     <div id="board" class="board"></div>
-    <button onclick="resetGame()">Reset</button>
+
+    <div style="margin-top: 20px;">
+      <strong>Scoreboard</strong>
+      <p>
+        🧑 Player Wins: <span id="xWins">0</span><br/>
+        🤖 AI Wins: <span id="oWins">0</span><br/>
+        🤝 Draws: <span id="draws">0</span>
+      </p>
+      <button onclick="resetGame()">Reset Game</button>
+      <button onclick="resetScores()">Reset Scores</button>
+    </div>
   </div>
 
   <script>
@@ -110,6 +136,7 @@
     let cells = Array(9).fill('');
     let currentPlayer = 'X';
     let mode = '2p';
+    let xWins = 0, oWins = 0, draws = 0;
 
     document.getElementById('mode').addEventListener('change', (e) => {
       mode = e.target.value;
@@ -132,11 +159,11 @@
       cells[index] = currentPlayer;
       render();
       if (checkWinner(currentPlayer)) {
-        setTimeout(() => alert(currentPlayer + ' wins!'), 100);
+        declareWinner(currentPlayer);
         return;
       }
       if (cells.every(c => c)) {
-        setTimeout(() => alert('Draw!'), 100);
+        declareDraw();
         return;
       }
       currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
@@ -200,10 +227,52 @@
       return win.some(comb => comb.every(i => b[i] === p));
     }
 
+    function declareWinner(winner) {
+      if (winner === 'X') {
+        xWins++;
+        launchFireworks();
+      } else if (winner === 'O') {
+        oWins++;
+      }
+      updateScores();
+      setTimeout(() => alert(winner + ' wins!'), 100);
+    }
+
+    function declareDraw() {
+      draws++;
+      updateScores();
+      setTimeout(() => alert('Draw!'), 100);
+    }
+
+    function updateScores() {
+      document.getElementById('xWins').textContent = xWins;
+      document.getElementById('oWins').textContent = oWins;
+      document.getElementById('draws').textContent = draws;
+    }
+
+    function resetScores() {
+      xWins = 0;
+      oWins = 0;
+      draws = 0;
+      updateScores();
+    }
+
     function resetGame() {
       cells = Array(9).fill('');
       currentPlayer = 'X';
       render();
+    }
+
+    function launchFireworks() {
+      for (let i = 0; i < 15; i++) {
+        const firework = document.createElement('div');
+        firework.className = 'firework';
+        firework.style.left = Math.random() * window.innerWidth + 'px';
+        firework.style.top = Math.random() * window.innerHeight + 'px';
+        firework.style.background = `hsl(${Math.random() * 360}, 100%, 50%)`;
+        document.body.appendChild(firework);
+        setTimeout(() => firework.remove(), 1000);
+      }
     }
 
     render();
