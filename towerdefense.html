@@ -6,7 +6,7 @@
   <title>High Noon Defense</title>
   <style>
     body {
-      background: url('https://i.imgur.com/yfQ93sn.jpg') no-repeat center center fixed;
+      background: url('western.png') no-repeat center center fixed;
       background-size: cover;
       margin: 0;
       padding: 0;
@@ -28,7 +28,7 @@
     canvas {
       border: 2px solid #222;
       border-radius: 10px;
-      background-color: rgba(0, 0, 0, 0.4);
+      background-color: rgba(0, 0, 0, 0.2);
       margin-top: 20px;
     }
 
@@ -60,23 +60,10 @@
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
 
-    // Draw a simple path and tower placeholders
     function drawMap() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Enemy path (a simple S-curve)
-      ctx.beginPath();
-      ctx.strokeStyle = "#444";
-      ctx.lineWidth = 8;
-      ctx.moveTo(50, 50);
-      ctx.lineTo(550, 50);
-      ctx.lineTo(550, 200);
-      ctx.lineTo(50, 200);
-      ctx.lineTo(50, 350);
-      ctx.lineTo(550, 350);
-      ctx.stroke();
-
-      // Placeholder towers
+      // Sample towers
       const towers = [
         { x: 100, y: 100 },
         { x: 200, y: 250 },
