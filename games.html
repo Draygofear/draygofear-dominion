@@ -139,7 +139,8 @@
         <label for="mode">Select Mode:</label>
         <select id="mode">
           <option value="pvp">2 Player</option>
-          <option value="ai">Vs Computer</option>
+          <option value="ai-easy">Vs Computer (Easy)</option>
+          <option value="ai-hard">Vs Computer (Hard)</option>
         </select>
         <div class="board" id="ticBoard"></div>
         <p id="ticStatus"></p>
@@ -164,26 +165,82 @@
     let ticCells = Array(9).fill(null);
     let gameOver = false;
 
-    function checkWinner() {
+    function checkWinner(board = ticCells) {
       const wins = [
         [0,1,2],[3,4,5],[6,7,8],
         [0,3,6],[1,4,7],[2,5,8],
         [0,4,8],[2,4,6]
       ];
       for (let [a,b,c] of wins) {
-        if (ticCells[a] && ticCells[a] === ticCells[b] && ticCells[a] === ticCells[c]) {
-          return ticCells[a];
+        if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+          return board[a];
         }
       }
       return null;
     }
 
     function makeAIMove() {
-      const empty = ticCells.map((val, i) => val === null ? i : null).filter(i => i !== null);
-      if (empty.length === 0) return;
-      const choice = empty[Math.floor(Math.random() * empty.length)];
-      ticCells[choice] = 'O';
-      ticTurn = 'X';
+      if (modeSelect.value === 'ai-easy') {
+        const empty = ticCells.map((val, i) => val === null ? i : null).filter(i => i !== null);
+        if (empty.length === 0) return;
+        const choice = empty[Math.floor(Math.random() * empty.length)];
+        ticCells[choice] = 'O';
+        ticTurn = 'X';
+      } else if (modeSelect.value === 'ai-hard') {
+        const bestMove = getBestMove();
+        if (bestMove !== null) {
+          ticCells[bestMove] = 'O';
+          ticTurn = 'X';
+        }
+      }
+    }
+
+    function getBestMove() {
+      let bestScore = -Infinity;
+      let move = null;
+      for (let i = 0; i < 9; i++) {
+        if (ticCells[i] === null) {
+          ticCells[i] = 'O';
+          let score = minimax(ticCells, 0, false);
+          ticCells[i] = null;
+          if (score > bestScore) {
+            bestScore = score;
+            move = i;
+          }
+        }
+      }
+      return move;
+    }
+
+    function minimax(board, depth, isMaximizing) {
+      let result = checkWinner(board);
+      if (result === 'O') return 1;
+      if (result === 'X') return -1;
+      if (!board.includes(null)) return 0;
+
+      if (isMaximizing) {
+        let best = -Infinity;
+        for (let i = 0; i < 9; i++) {
+          if (board[i] === null) {
+            board[i] = 'O';
+            let score = minimax(board, depth + 1, false);
+            board[i] = null;
+            best = Math.max(score, best);
+          }
+        }
+        return best;
+      } else {
+        let best = Infinity;
+        for (let i = 0; i < 9; i++) {
+          if (board[i] === null) {
+            board[i] = 'X';
+            let score = minimax(board, depth + 1, true);
+            board[i] = null;
+            best = Math.min(score, best);
+          }
+        }
+        return best;
+      }
     }
 
     function renderTicBoard() {
@@ -205,7 +262,7 @@
               gameOver = true;
             } else {
               renderTicBoard();
-              if (modeSelect.value === 'ai' && ticTurn === 'O') {
+              if (modeSelect.value.startsWith('ai') && ticTurn === 'O') {
                 setTimeout(() => {
                   makeAIMove();
                   renderTicBoard();
