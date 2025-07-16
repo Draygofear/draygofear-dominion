@@ -3,117 +3,117 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>DraygoFear Dominion - Games</title>
+  <title>Games | DraygoFear Dominion</title>
+  <link rel="stylesheet" href="style.css" />
   <style>
     body {
-      margin: 0;
+      background-color: #111;
+      color: #f5f5f5;
       font-family: 'Segoe UI', sans-serif;
-      background-color: #0d0d0d;
-      color: #fff;
+      margin: 0;
+      padding: 0;
       text-align: center;
     }
 
-    .navbar {
-      background-color: #1a1a1a;
-      padding: 15px;
+    header img {
+      width: 180px;
+      margin-top: 20px;
     }
 
-    .navbar a {
-      color: #fff;
+    nav {
+      margin: 20px 0;
+    }
+
+    nav a {
+      color: #f5f5f5;
       margin: 0 15px;
       text-decoration: none;
-      font-size: 18px;
+      font-weight: bold;
     }
 
-    .navbar a:hover {
-      color: #0ff;
+    .games-section {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 30px;
+      margin: 30px 0;
     }
 
-    .logo {
-      margin: 30px auto 10px;
-    }
-
-    .logo img {
-      max-width: 300px;
-    }
-
-    .game-section {
-      max-width: 800px;
-      margin: 20px auto;
+    .game-link {
+      background: #222;
       padding: 20px;
-      background-color: #1a1a1a;
       border-radius: 10px;
+      width: 200px;
+      transition: 0.3s;
     }
 
-    .game-section h2 {
-      margin-bottom: 10px;
+    .game-link:hover {
+      background: #333;
     }
 
-    .game-section a.play-button {
-      display: inline-block;
-      margin-top: 10px;
-      padding: 10px 20px;
-      background-color: #444;
-      color: #fff;
+    .game-link a {
       text-decoration: none;
-      border-radius: 6px;
-      transition: background-color 0.3s ease;
-    }
-
-    .game-section a.play-button:hover {
-      background-color: #0ff;
-      color: #000;
+      color: #fff;
+      font-size: 1.2em;
+      display: block;
     }
 
     .ad-column {
-      position: fixed;
-      top: 0;
       width: 120px;
-      height: 100%;
-      background-color: #111;
+      background-color: #1a1a1a;
       padding: 10px;
-      color: #888;
-      font-size: 14px;
+      color: #ccc;
+      font-size: 0.9em;
     }
 
-    .ad-left {
-      left: 0;
+    .ad-container {
+      display: flex;
+      justify-content: space-between;
     }
 
-    .ad-right {
-      right: 0;
+    .main-content {
+      flex-grow: 1;
+      padding: 0 20px;
     }
 
-    @media (max-width: 900px) {
-      .ad-column {
-        display: none;
-      }
+    .ad-placeholder {
+      background-color: #333;
+      height: 600px;
+      margin-top: 20px;
+      border-radius: 10px;
     }
   </style>
 </head>
 <body>
-  <div class="ad-column ad-left">Advertisement</div>
-  <div class="ad-column ad-right">Advertisement</div>
+  <header>
+    <img src="logo.png" alt="DraygoFear Dominion Logo" />
+  </header>
 
-  <div class="navbar">
-    <a href="index.html">🏠 Home</a>
-    <a href="games.html">🎮 Games</a>
-    <a href="gamelinks.html">🔗 Game Links</a>
-  </div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="links.html">Game Links</a>
+  </nav>
 
-  <div class="logo">
-    <img src="logo.png" alt="DraygoFear Logo" />
-  </div>
+  <div class="ad-container">
+    <div class="ad-column">
+      <div class="ad-placeholder">Ad Space</div>
+    </div>
 
-  <div class="game-section">
-    <h2>❌ Tic Tac Toe</h2>
-    <iframe src="tictactoe.html" width="100%" height="600" style="border:none;"></iframe>
-  </div>
+    <div class="main-content">
+      <h1>Games</h1>
+      <div class="games-section">
+        <div class="game-link">
+          <a href="tictactoe.html">Play Tic Tac Toe</a>
+        </div>
+        <div class="game-link">
+          <a href="towerdefense.html">Play Tower Defense</a>
+        </div>
+      </div>
+    </div>
 
-  <div class="game-section">
-    <h2>🛡️ High Noon Defense</h2>
-    <p>Defend your turf in a wild west tower defense showdown!</p>
-    <a href="towerdefense.html" class="play-button">Play High Noon Defense</a>
+    <div class="ad-column">
+      <div class="ad-placeholder">Ad Space</div>
+    </div>
   </div>
 </body>
 </html>
