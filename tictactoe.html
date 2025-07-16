@@ -1,181 +1,220 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Tic Tac Toe</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
   <style>
     body {
-      margin: 0;
-      background-color: #1e1e1e;
-      color: #f5f5f5;
-      font-family: 'Segoe UI', sans-serif;
+      background-color: #111;
+      color: #f0f0f0;
+      font-family: Arial, sans-serif;
       text-align: center;
     }
-    .logo {
-      max-width: 160px;
-      margin-top: 20px;
-    }
-    .back-button {
-      margin: 10px;
-      display: inline-block;
-      padding: 10px 20px;
-      background: #444;
-      color: #fff;
-      border: none;
-      text-decoration: none;
-      border-radius: 6px;
+    img.logo {
+      width: 160px;
+      margin: 20px auto;
+      display: block;
     }
     h1 {
-      margin-top: 10px;
+      margin-top: 0;
+      font-size: 2rem;
     }
-    .game-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: 20px;
+    .mode-btn {
+      background: #333;
+      border: none;
+      color: white;
+      padding: 8px 15px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+      cursor: pointer;
     }
     .board {
       display: grid;
       grid-template-columns: repeat(3, 100px);
       grid-template-rows: repeat(3, 100px);
+      margin: 20px auto;
       gap: 5px;
     }
     .cell {
-      width: 100px;
-      height: 100px;
-      background: #222;
+      background-color: #222;
+      color: white;
+      font-size: 2.5rem;
       display: flex;
-      justify-content: center;
       align-items: center;
-      font-size: 3em;
-      font-weight: bold;
+      justify-content: center;
       cursor: pointer;
-      border-radius: 5px;
-      transition: background 0.3s;
+      border-radius: 10px;
     }
     .cell:hover {
-      background: #333;
+      background-color: #444;
     }
-    .scoreboard {
-      margin-top: 20px;
+    .score {
+      margin: 15px 0;
     }
-    .fireworks {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 10;
-      display: none;
-    }
-    .creepy-face {
-      display: none;
-      margin: 20px auto;
-      max-width: 150px;
-      animation: fadeIn 3s ease-in-out;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    .mode-toggle {
-      margin-top: 10px;
+    .reset-btn {
+      margin: 10px;
       padding: 6px 12px;
       background: #444;
+      color: white;
       border: none;
-      border-radius: 5px;
-      color: #fff;
+      border-radius: 4px;
       cursor: pointer;
+    }
+    .creepy-img {
+      display: none;
+      width: 200px;
+      margin: 20px auto;
+      opacity: 0;
+      transition: opacity 3s ease;
+    }
+    .firework {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 80px;
+      height: 80px;
+      background: radial-gradient(circle, #ff0, #f00, transparent);
+      border-radius: 50%;
+      animation: explode 0.7s ease-out forwards;
+      pointer-events: none;
+    }
+    @keyframes explode {
+      0% { transform: scale(0); opacity: 1; }
+      100% { transform: scale(3); opacity: 0; }
+    }
+    .back-btn {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 8px 14px;
+      background: #333;
+      color: white;
+      border-radius: 6px;
+      text-decoration: none;
     }
   </style>
 </head>
 <body>
-  <a href="games.html" class="back-button">← Back to Games</a>
-  <img src="logo.png" alt="DraygoFear Logo" class="logo">
+  <img src="logo.png" alt="Dominion Logo" class="logo" />
   <h1>Tic Tac Toe</h1>
-  <button class="mode-toggle" onclick="toggleMode()">Mode: 2 Player</button>
+  <button id="modeBtn" class="mode-btn">Mode: 2 Player</button>
+  <div class="board" id="board"></div>
 
-  <div class="game-container">
-    <div class="board" id="board">
-      <!-- Cells will be generated here -->
-    </div>
-  </div>
+  <div class="score" id="score">X Wins: 0 | O Wins: 0 | Draws: 0</div>
+  <button onclick="resetGame()" class="reset-btn">Reset Game</button>
 
-  <div class="scoreboard">
-    <p>X Wins: <span id="xWins">0</span> | O Wins: <span id="oWins">0</span> | Draws: <span id="draws">0</span></p>
-    <button onclick="resetGame()">Reset Game</button>
-  </div>
+  <img src="https://i.ibb.co/3RcHVXF/creepy-face.jpg" alt="Creepy" id="creepy" class="creepy-img" />
 
-  <img src="https://i.imgur.com/7VZzYgT.png" alt="Creepy Face" class="creepy-face" id="creepyFace">
-
-  <canvas class="fireworks" id="fireworksCanvas"></canvas>
+  <a href="games.html" class="back-btn">← Back to Games</a>
 
   <script>
-    const board = document.getElementById('board');
-    const creepyFace = document.getElementById('creepyFace');
-    const fireworks = document.getElementById('fireworksCanvas');
-    const xWinsEl = document.getElementById('xWins');
-    const oWinsEl = document.getElementById('oWins');
-    const drawsEl = document.getElementById('draws');
+    const board = document.getElementById("board");
+    const scoreDisplay = document.getElementById("score");
+    const creepy = document.getElementById("creepy");
+    const modeBtn = document.getElementById("modeBtn");
 
-    let cells = [];
-    let currentPlayer = 'X';
-    let gameMode = '2p';
-    let gameOver = false;
+    let cells = Array(9).fill("");
+    let currentPlayer = "X";
+    let gameActive = true;
+    let modeAI = false;
+    let score = { X: 0, O: 0, Draws: 0 };
 
-    let xWins = 0, oWins = 0, draws = 0;
-
-    function toggleMode() {
-      gameMode = gameMode === '2p' ? 'ai' : '2p';
-      document.querySelector('.mode-toggle').textContent = `Mode: ${gameMode === '2p' ? '2 Player' : 'Vs AI'}`;
+    modeBtn.onclick = () => {
+      modeAI = !modeAI;
+      modeBtn.innerText = "Mode: " + (modeAI ? "Vs AI" : "2 Player");
       resetGame();
-    }
+    };
 
     function createBoard() {
-      board.innerHTML = '';
-      cells = [];
-      creepyFace.style.display = 'none';
-      gameOver = false;
-      for (let i = 0; i < 9; i++) {
-        const cell = document.createElement('div');
-        cell.classList.add('cell');
-        cell.addEventListener('click', () => handleClick(i));
+      board.innerHTML = "";
+      cells.forEach((val, i) => {
+        const cell = document.createElement("div");
+        cell.className = "cell";
+        cell.textContent = val;
+        cell.onclick = () => handleCellClick(i);
         board.appendChild(cell);
-        cells.push(cell);
+      });
+    }
+
+    function handleCellClick(index) {
+      if (!gameActive || cells[index]) return;
+
+      cells[index] = currentPlayer;
+      createBoard();
+      checkWinner();
+
+      if (modeAI && gameActive && currentPlayer === "X") {
+        setTimeout(() => {
+          aiMove();
+          checkWinner();
+        }, 300);
       }
     }
 
-    function handleClick(index) {
-      if (cells[index].textContent || gameOver) return;
-      cells[index].textContent = currentPlayer;
-      if (checkWin(currentPlayer)) {
-        endGame(currentPlayer);
-        return;
-      }
-      if (cells.every(cell => cell.textContent)) {
-        endGame('draw');
-        return;
-      }
-      currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-      if (gameMode === 'ai' && currentPlayer === 'O') {
-        setTimeout(aiMove, 500);
-      }
+    function aiMove() {
+      let empty = cells.map((val, i) => val === "" ? i : null).filter(v => v !== null);
+      let choice = empty[Math.floor(Math.random() * empty.length)];
+      cells[choice] = "O";
+      createBoard();
     }
 
-    function checkWin(player) {
-      const combos = [
+    function checkWinner() {
+      const wins = [
         [0,1,2],[3,4,5],[6,7,8],
         [0,3,6],[1,4,7],[2,5,8],
         [0,4,8],[2,4,6]
       ];
-      return combos.some(combo => combo.every(i => cells[i].textContent === player));
+      for (let combo of wins) {
+        const [a,b,c] = combo;
+        if (cells[a] && cells[a] === cells[b] && cells[a] === cells[c]) {
+          endGame(cells[a]);
+          return;
+        }
+      }
+      if (!cells.includes("")) endGame("Draw");
+      else currentPlayer = currentPlayer === "X" ? "O" : "X";
     }
 
-    function endGame(result) {
-      gameOver = true;
-      if (result === 'X') {
-        xWins++;
-        xWinsEl.textContent = xWins;
-        showFireworks();
+    function endGame(winner) {
+      gameActive = false;
+      if (winner === "Draw") score.Draws++;
+      else score[winner]++;
+      updateScore();
+
+      if (winner === "X") triggerFireworks();
+      if (winner === "O" && modeAI) showCreepyImage();
+    }
+
+    function updateScore() {
+      scoreDisplay.textContent = `X Wins: ${score.X} | O Wins: ${score.O} | Draws: ${score.Draws}`;
+    }
+
+    function resetGame() {
+      cells = Array(9).fill("");
+      currentPlayer = "X";
+      gameActive = true;
+      creepy.style.opacity = 0;
+      createBoard();
+    }
+
+    function showCreepyImage() {
+      creepy.style.display = "block";
+      setTimeout(() => creepy.style.opacity = 1, 200);
+    }
+
+    function triggerFireworks() {
+      for (let i = 0; i < 10; i++) {
+        const fw = document.createElement("div");
+        fw.className = "firework";
+        fw.style.top = Math.random() * 90 + "%";
+        fw.style.left = Math.random() * 90 + "%";
+        document.body.appendChild(fw);
+        setTimeout(() => fw.remove(), 800);
+      }
+    }
+
+    createBoard();
+  </script>
+</body>
+</html>
