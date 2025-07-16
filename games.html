@@ -5,21 +5,32 @@
   <title>Games - DraygoFear Dominion</title>
   <link rel="stylesheet" href="style.css" />
   <style>
+    body {
+      background-color: #0e0e1a;
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+    }
     .game-container {
       display: flex;
       flex-wrap: wrap;
       gap: 40px;
       justify-content: center;
-      margin-top: 30px;
+      margin: 30px auto;
+      max-width: 1200px;
     }
     .game {
-      border: 2px solid #444;
+      border: 2px solid #555;
       padding: 20px;
-      border-radius: 10px;
-      background: #222;
-      color: #fff;
-      box-shadow: 0 0 10px #000;
-      max-width: 400px;
+      border-radius: 15px;
+      background: linear-gradient(to bottom right, #1c1c2e, #2a2a3d);
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+      transition: transform 0.2s;
+      max-width: 420px;
+    }
+    .game:hover {
+      transform: scale(1.02);
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.4);
     }
     .board {
       display: grid;
@@ -27,38 +38,55 @@
       margin-top: 10px;
     }
     .tic-tac-toe .board {
-      grid-template-columns: repeat(3, 60px);
+      grid-template-columns: repeat(3, 80px);
     }
     .tic-tac-toe .cell {
-      width: 60px;
-      height: 60px;
+      width: 80px;
+      height: 80px;
       text-align: center;
-      vertical-align: middle;
-      font-size: 24px;
-      background-color: #333;
-      color: #fff;
+      font-size: 36px;
+      background: radial-gradient(#444, #222);
+      border-radius: 10px;
+      color: #00f0ff;
+      box-shadow: inset 0 0 8px #000;
       cursor: pointer;
+      transition: background 0.2s;
+    }
+    .tic-tac-toe .cell:hover {
+      background: radial-gradient(#666, #333);
     }
     .checkers .board {
-      grid-template-columns: repeat(8, 40px);
+      grid-template-columns: repeat(8, 50px);
+      margin-top: 15px;
     }
     .checkers .cell {
-      width: 40px;
-      height: 40px;
-      background-color: #eee;
+      width: 50px;
+      height: 50px;
+      border-radius: 6px;
+      background-color: #d8c18f;
     }
     .checkers .black {
-      background-color: #444;
+      background-color: #5e3d2c;
     }
     .checkers .piece {
-      width: 30px;
-      height: 30px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
-      background-color: red;
-      margin: 5px auto;
+      background: radial-gradient(circle at 30% 30%, #ff0000, #800000);
+      margin: 6px auto;
+      box-shadow: 0 0 10px rgba(255, 50, 50, 0.5);
     }
     select, button {
       margin-top: 10px;
+      padding: 6px 10px;
+      font-size: 14px;
+      background: #1f1f30;
+      color: #00f0ff;
+      border: 1px solid #00f0ff;
+      border-radius: 6px;
+    }
+    h2, h3 {
+      color: #00f0ff;
     }
   </style>
 </head>
