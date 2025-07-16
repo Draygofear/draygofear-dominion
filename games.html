@@ -1,10 +1,62 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Games - DraygoFear Dominion</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    .game-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 40px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+    .game {
+      border: 2px solid #444;
+      padding: 20px;
+      border-radius: 10px;
+      background: #222;
+      color: #fff;
+      box-shadow: 0 0 10px #000;
+    }
+    .board {
+      display: grid;
+      gap: 5px;
+      margin-top: 10px;
+    }
+    .tic-tac-toe .board {
+      grid-template-columns: repeat(3, 60px);
+    }
+    .tic-tac-toe .cell {
+      width: 60px;
+      height: 60px;
+      text-align: center;
+      vertical-align: middle;
+      font-size: 24px;
+      background-color: #333;
+      color: #fff;
+      cursor: pointer;
+    }
+    .checkers .board {
+      grid-template-columns: repeat(8, 40px);
+    }
+    .checkers .cell {
+      width: 40px;
+      height: 40px;
+      background-color: #eee;
+    }
+    .checkers .black {
+      background-color: #444;
+    }
+    .checkers .piece {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background-color: red;
+      margin: 5px auto;
+    }
+  </style>
 </head>
 <body>
   <header>
@@ -15,18 +67,72 @@
       <a href="games.html">Games</a>
       <a href="links.html">Game Links</a>
     </nav>
-  </header>
-
-  <main>
+  </header>  <main>
     <h2>Games</h2>
-    <p>Explore the latest adventures forged in the Dominion. These are the realms where your story begins.</p>
-    
-    <ul>
-      <li><strong>Realm of Shadows</strong> – A dark fantasy action RPG where your courage lights the way.</li>
-      <li><strong>Neon Outlaws</strong> – Battle on bikes in a futuristic city with synthwave vibes and high-speed chaos.</li>
-      <li><strong>Towerbound</strong> – Defend your dominion in a relentless tower defense war against nightmarish creatures.</li>
-      <li><strong>Skyward Trials</strong> – Master the skies in this magical aerial dueling game.</li>
-    </ul>
-  </main>
-</body>
+    <div class="game-container">
+      <div class="game tic-tac-toe">
+        <h3>Tic Tac Toe</h3>
+        <div class="board" id="ticBoard"></div>
+        <p id="ticStatus"></p>
+      </div><div class="game checkers">
+    <h3>Checkers (Demo)</h3>
+    <div class="board" id="checkersBoard"></div>
+  </div>
+</div>
+
+  </main>  <script>
+    // TIC TAC TOE
+    const ticBoard = document.getElementById('ticBoard');
+    const ticStatus = document.getElementById('ticStatus');
+    let ticTurn = 'X';
+    let ticCells = Array(9).fill(null);
+
+    function checkWinner() {
+      const wins = [
+        [0,1,2],[3,4,5],[6,7,8],
+        [0,3,6],[1,4,7],[2,5,8],
+        [0,4,8],[2,4,6]
+      ];
+      for (let combo of wins) {
+        const [a,b,c] = combo;
+        if (ticCells[a] && ticCells[a] === ticCells[b] && ticCells[a] === ticCells[c]) {
+          return ticCells[a];
+        }
+      }
+      return null;
+    }
+
+    function renderTicBoard() {
+      ticBoard.innerHTML = '';
+      ticCells.forEach((val, i) => {
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        cell.textContent = val || '';
+        cell.onclick = () => {
+          if (!ticCells[i] && !checkWinner()) {
+            ticCells[i] = ticTurn;
+            ticTurn = ticTurn === 'X' ? 'O' : 'X';
+            renderTicBoard();
+            const winner = checkWinner();
+            ticStatus.textContent = winner ? `${winner} wins!` : '';
+          }
+        };
+        ticBoard.appendChild(cell);
+      });
+    }
+    renderTicBoard();
+
+    // SIMPLE CHECKERS BOARD
+    const checkersBoard = document.getElementById('checkersBoard');
+    for (let i = 0; i < 64; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'cell ' + ((Math.floor(i/8)+i)%2 === 0 ? 'black' : '');
+      if (Math.floor(i/8) < 3 && cell.className.includes('black')) {
+        const piece = document.createElement('div');
+        piece.className = 'piece';
+        cell.appendChild(piece);
+      }
+      checkersBoard.appendChild(cell);
+    }
+  </script></body>
 </html>
