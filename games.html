@@ -19,6 +19,7 @@
       background: #222;
       color: #fff;
       box-shadow: 0 0 10px #000;
+      max-width: 400px;
     }
     .board {
       display: grid;
@@ -56,6 +57,9 @@
       background-color: red;
       margin: 5px auto;
     }
+    select, button {
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
@@ -72,8 +76,14 @@
     <div class="game-container">
       <div class="game tic-tac-toe">
         <h3>Tic Tac Toe</h3>
+        <label for="mode">Select Mode:</label>
+        <select id="mode">
+          <option value="pvp">2 Player</option>
+          <option value="ai">Vs Computer</option>
+        </select>
         <div class="board" id="ticBoard"></div>
         <p id="ticStatus"></p>
+        <button onclick="resetTicTacToe()">Reset</button>
       </div><div class="game checkers">
     <h3>Checkers (Demo)</h3>
     <div class="board" id="checkersBoard"></div>
@@ -81,11 +91,13 @@
 </div>
 
   </main>  <script>
-    // TIC TAC TOE
+    // TIC TAC TOE WITH AI MODE
     const ticBoard = document.getElementById('ticBoard');
     const ticStatus = document.getElementById('ticStatus');
+    const modeSelect = document.getElementById('mode');
     let ticTurn = 'X';
     let ticCells = Array(9).fill(null);
+    let gameOver = false;
 
     function checkWinner() {
       const wins = [
@@ -93,13 +105,20 @@
         [0,3,6],[1,4,7],[2,5,8],
         [0,4,8],[2,4,6]
       ];
-      for (let combo of wins) {
-        const [a,b,c] = combo;
+      for (let [a,b,c] of wins) {
         if (ticCells[a] && ticCells[a] === ticCells[b] && ticCells[a] === ticCells[c]) {
           return ticCells[a];
         }
       }
       return null;
+    }
+
+    function makeAIMove() {
+      const empty = ticCells.map((val, i) => val === null ? i : null).filter(i => i !== null);
+      if (empty.length === 0) return;
+      const choice = empty[Math.floor(Math.random() * empty.length)];
+      ticCells[choice] = 'O';
+      ticTurn = 'X';
     }
 
     function renderTicBoard() {
@@ -109,17 +128,47 @@
         cell.className = 'cell';
         cell.textContent = val || '';
         cell.onclick = () => {
-          if (!ticCells[i] && !checkWinner()) {
+          if (!ticCells[i] && !checkWinner() && !gameOver) {
             ticCells[i] = ticTurn;
             ticTurn = ticTurn === 'X' ? 'O' : 'X';
-            renderTicBoard();
             const winner = checkWinner();
-            ticStatus.textContent = winner ? `${winner} wins!` : '';
+            if (winner) {
+              ticStatus.textContent = `${winner} wins!`;
+              gameOver = true;
+            } else if (!ticCells.includes(null)) {
+              ticStatus.textContent = "It's a draw!";
+              gameOver = true;
+            } else {
+              renderTicBoard();
+              if (modeSelect.value === 'ai' && ticTurn === 'O') {
+                setTimeout(() => {
+                  makeAIMove();
+                  renderTicBoard();
+                  const aiWin = checkWinner();
+                  if (aiWin) {
+                    ticStatus.textContent = `${aiWin} wins!`;
+                    gameOver = true;
+                  }
+                }, 300);
+              }
+              return;
+            }
           }
+          renderTicBoard();
         };
         ticBoard.appendChild(cell);
       });
     }
+
+    function resetTicTacToe() {
+      ticCells = Array(9).fill(null);
+      ticTurn = 'X';
+      gameOver = false;
+      ticStatus.textContent = '';
+      renderTicBoard();
+    }
+
+    modeSelect.addEventListener('change', resetTicTacToe);
     renderTicBoard();
 
     // SIMPLE CHECKERS BOARD
