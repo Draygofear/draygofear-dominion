@@ -4,25 +4,39 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Tic Tac Toe</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
   <style>
     body {
-      background-color: #111;
-      color: #fff;
       font-family: Arial, sans-serif;
+      background-color: #111;
+      color: white;
       text-align: center;
       padding: 20px;
     }
 
-    .logo {
-      max-width: 150px;
+    h1 {
       margin-bottom: 10px;
     }
 
-    .board {
+    .mode-button, button {
+      padding: 8px 16px;
+      margin: 10px 0;
+      font-size: 16px;
+      background-color: #333;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .mode-button:hover, button:hover {
+      background-color: #555;
+    }
+
+    #board {
       display: grid;
       grid-template-columns: repeat(3, 100px);
-      grid-gap: 10px;
+      gap: 10px;
       justify-content: center;
       margin: 20px auto;
     }
@@ -31,228 +45,207 @@
       width: 100px;
       height: 100px;
       background-color: #222;
-      font-size: 3rem;
+      font-size: 48px;
+      color: white;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      border-radius: 8px;
-      transition: background-color 0.3s;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #000;
     }
 
-    .cell:hover {
-      background-color: #333;
-    }
-
-    .score {
-      margin: 20px 0;
-      font-size: 1.1rem;
-    }
-
-    button {
-      padding: 10px 20px;
-      margin: 10px;
-      background-color: #444;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #555;
+    #scoreboard {
+      margin-top: 20px;
+      font-size: 18px;
     }
 
     .creepy-face {
-      max-width: 200px;
+      width: 200px;
       margin: 20px auto;
       display: none;
-      animation: fadeIn 3s ease-in-out forwards;
+      opacity: 0;
+      transition: opacity 3s ease-in-out;
     }
 
-    @keyframes fadeIn {
-      0% { opacity: 0; }
-      100% { opacity: 1; }
+    .creepy-face.visible {
+      display: block;
+      opacity: 1;
     }
 
     .back-button {
       margin-top: 30px;
       display: inline-block;
       padding: 10px 20px;
-      background-color: #444;
-      color: #fff;
+      background-color: #333;
+      color: white;
       text-decoration: none;
       border-radius: 5px;
     }
 
     .back-button:hover {
-      background-color: #666;
+      background-color: #555;
     }
   </style>
 </head>
 <body>
-  <img src="logo.png" alt="Dominion Logo" class="logo" />
   <h1>Tic Tac Toe</h1>
-
-  <button onclick="toggleMode()">Mode: <span id="modeLabel">Vs AI</span></button>
-
-  <div class="board" id="board"></div>
-
-  <div class="score" id="score">
-    X Wins: 0 | O Wins: 0 | Draws: 0
+  <button class="mode-button" id="modeToggle">Mode: Vs AI</button>
+  <div id="board"></div>
+  <div id="scoreboard">
+    X Wins: <span id="xWins">0</span> |
+    O Wins: <span id="oWins">0</span> |
+    Draws: <span id="draws">0</span>
   </div>
-
   <button onclick="resetGame()">Reset Game</button>
-
-  <img id="creepy" class="creepy-face" src="https://i.imgur.com/FKxM8Id.png" alt="Creepy Face" />
-
-  <br />
+  <img id="creepy" class="creepy-face" src="creepyface.webp" alt="Creepy Face" />
+  <br>
   <a href="games.html" class="back-button">← Back to Games</a>
 
   <script>
-    const board = document.getElementById('board');
-    const scoreDisplay = document.getElementById('score');
-    const creepyFace = document.getElementById('creepy');
-    const modeLabel = document.getElementById('modeLabel');
-
-    let cells = [];
-    let currentPlayer = 'X';
+    let board = ["", "", "", "", "", "", "", "", ""];
+    let currentPlayer = "X";
     let vsAI = true;
-    let scores = { X: 0, O: 0, draws: 0 };
-    let gameActive = true;
+    let gameOver = false;
+    let xWins = 0, oWins = 0, draws = 0;
+
+    const boardDiv = document.getElementById("board");
+    const modeToggle = document.getElementById("modeToggle");
+    const creepyFace = document.getElementById("creepy");
+
+    modeToggle.addEventListener("click", () => {
+      vsAI = !vsAI;
+      modeToggle.innerText = `Mode: ${vsAI ? "Vs AI" : "2 Player"}`;
+      resetGame();
+    });
 
     function createBoard() {
-      board.innerHTML = '';
-      cells = [];
-      for (let i = 0; i < 9; i++) {
-        const cell = document.createElement('div');
-        cell.classList.add('cell');
-        cell.addEventListener('click', () => handleMove(i));
-        board.appendChild(cell);
-        cells.push(cell);
-      }
-      gameActive = true;
-      creepyFace.style.display = 'none';
+      boardDiv.innerHTML = "";
+      board.forEach((cell, i) => {
+        const div = document.createElement("div");
+        div.classList.add("cell");
+        div.dataset.index = i;
+        div.innerText = cell;
+        div.addEventListener("click", handleClick);
+        boardDiv.appendChild(div);
+      });
     }
 
-    function handleMove(index) {
-      if (!gameActive || cells[index].textContent) return;
-
-      cells[index].textContent = currentPlayer;
-      if (checkWin(currentPlayer)) {
-        scores[currentPlayer]++;
-        gameActive = false;
-        updateScore();
-        if (vsAI && currentPlayer === 'O') creepyFace.style.display = 'block';
-        return;
-      }
-
-      if (cells.every(cell => cell.textContent)) {
-        scores.draws++;
-        gameActive = false;
-        updateScore();
-        return;
-      }
-
-      currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-
-      if (vsAI && currentPlayer === 'O' && gameActive) {
-        setTimeout(aiMove, 500);
-      }
-    }
-
-    function checkWin(player) {
-      const winPatterns = [
-        [0,1,2], [3,4,5], [6,7,8],
-        [0,3,6], [1,4,7], [2,5,8],
-        [0,4,8], [2,4,6]
-      ];
-      return winPatterns.some(pattern =>
-        pattern.every(i => cells[i].textContent === player)
-      );
-    }
-
-    function updateScore() {
-      scoreDisplay.textContent = `X Wins: ${scores.X} | O Wins: ${scores.O} | Draws: ${scores.draws}`;
-    }
-
-    function resetGame() {
-      currentPlayer = 'X';
+    function handleClick(e) {
+      const index = e.target.dataset.index;
+      if (board[index] || gameOver) return;
+      board[index] = currentPlayer;
       createBoard();
-    }
+      if (checkWinner(currentPlayer)) {
+        updateScore(currentPlayer);
+        gameOver = true;
+        if (vsAI && currentPlayer === "O") {
+          creepyFace.classList.add("visible");
+        }
+        return;
+      }
+      if (!board.includes("")) {
+        draws++;
+        updateScore();
+        gameOver = true;
+        return;
+      }
+      currentPlayer = currentPlayer === "X" ? "O" : "X";
 
-    function toggleMode() {
-      vsAI = !vsAI;
-      modeLabel.textContent = vsAI ? 'Vs AI' : '2 Player';
-      resetGame();
+      if (vsAI && currentPlayer === "O" && !gameOver) {
+        setTimeout(aiMove, 400);
+      }
     }
 
     function aiMove() {
-      // Basic unbeatable AI using minimax
-      const bestMove = minimax(cells.map(cell => cell.textContent), 'O').index;
-      handleMove(bestMove);
-    }
-
-    function minimax(boardState, player) {
-      const huPlayer = 'X';
-      const aiPlayer = 'O';
-
-      const availSpots = boardState.map((val, i) => val ? null : i).filter(v => v !== null);
-
-      if (checkWinSim(boardState, huPlayer)) return { score: -10 };
-      if (checkWinSim(boardState, aiPlayer)) return { score: 10 };
-      if (availSpots.length === 0) return { score: 0 };
-
-      const moves = [];
-
-      for (let i = 0; i < availSpots.length; i++) {
-        const move = {};
-        move.index = availSpots[i];
-        boardState[availSpots[i]] = player;
-
-        const result = minimax(boardState, player === aiPlayer ? huPlayer : aiPlayer);
-        move.score = result.score;
-
-        boardState[availSpots[i]] = '';
-        moves.push(move);
-      }
-
-      let bestMove;
-      if (player === aiPlayer) {
-        let bestScore = -Infinity;
-        for (let i = 0; i < moves.length; i++) {
-          if (moves[i].score > bestScore) {
-            bestScore = moves[i].score;
-            bestMove = i;
+      let bestScore = -Infinity;
+      let move;
+      board.forEach((cell, i) => {
+        if (cell === "") {
+          board[i] = "O";
+          let score = minimax(board, 0, false);
+          board[i] = "";
+          if (score > bestScore) {
+            bestScore = score;
+            move = i;
           }
         }
+      });
+      if (move !== undefined) {
+        board[move] = "O";
+        createBoard();
+        if (checkWinner("O")) {
+          updateScore("O");
+          gameOver = true;
+          creepyFace.classList.add("visible");
+          return;
+        }
+        if (!board.includes("")) {
+          draws++;
+          updateScore();
+          gameOver = true;
+          return;
+        }
+        currentPlayer = "X";
+      }
+    }
+
+    function minimax(board, depth, isMaximizing) {
+      if (checkWinner("O")) return 10 - depth;
+      if (checkWinner("X")) return depth - 10;
+      if (!board.includes("")) return 0;
+
+      if (isMaximizing) {
+        let bestScore = -Infinity;
+        board.forEach((cell, i) => {
+          if (cell === "") {
+            board[i] = "O";
+            let score = minimax(board, depth + 1, false);
+            board[i] = "";
+            bestScore = Math.max(score, bestScore);
+          }
+        });
+        return bestScore;
       } else {
         let bestScore = Infinity;
-        for (let i = 0; i < moves.length; i++) {
-          if (moves[i].score < bestScore) {
-            bestScore = moves[i].score;
-            bestMove = i;
+        board.forEach((cell, i) => {
+          if (cell === "") {
+            board[i] = "X";
+            let score = minimax(board, depth + 1, true);
+            board[i] = "";
+            bestScore = Math.min(score, bestScore);
           }
-        }
+        });
+        return bestScore;
       }
-
-      return moves[bestMove];
     }
 
-    function checkWinSim(board, player) {
-      const winPatterns = [
+    function checkWinner(player) {
+      const wins = [
         [0,1,2], [3,4,5], [6,7,8],
         [0,3,6], [1,4,7], [2,5,8],
         [0,4,8], [2,4,6]
       ];
-      return winPatterns.some(pattern =>
-        pattern.every(i => board[i] === player)
-      );
+      return wins.some(combo => combo.every(i => board[i] === player));
     }
 
-    // Start the game
+    function updateScore(winner) {
+      if (winner === "X") xWins++;
+      else if (winner === "O") oWins++;
+      document.getElementById("xWins").innerText = xWins;
+      document.getElementById("oWins").innerText = oWins;
+      document.getElementById("draws").innerText = draws;
+    }
+
+    function resetGame() {
+      board = ["", "", "", "", "", "", "", "", ""];
+      currentPlayer = "X";
+      gameOver = false;
+      createBoard();
+      creepyFace.classList.remove("visible");
+    }
+
     createBoard();
-    updateScore();
   </script>
 </body>
 </html>
