@@ -1,0 +1,226 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>High Noon Defense</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0d0d0d;
+      color: #fff;
+      text-align: center;
+    }
+
+    .logo {
+      margin: 20px auto 10px;
+    }
+
+    .logo img {
+      max-width: 300px;
+    }
+
+    .back-btn {
+      display: inline-block;
+      margin: 20px;
+      padding: 10px 20px;
+      background-color: #222;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 5px;
+      border: 1px solid #444;
+    }
+
+    .back-btn:hover {
+      background-color: #444;
+    }
+
+    canvas {
+      background-color: #111;
+      margin: 20px auto;
+      display: block;
+      border: 2px solid #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="logo">
+    <img src="logo.png" alt="DraygoFear Logo" />
+  </div>
+
+  <a class="back-btn" href="games.html">⬅️ Back to Games</a>
+
+  <canvas id="gameCanvas" width="800" height="500"></canvas>
+
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let enemies = [];
+    let towers = [];
+    let projectiles = [];
+    let lives = 5;
+    let money = 100;
+    let wave = 1;
+
+    const path = [
+      {x: 0, y: 100},
+      {x: 200, y: 100},
+      {x: 200, y: 300},
+      {x: 600, y: 300},
+      {x: 600, y: 200},
+      {x: 800, y: 200}
+    ];
+
+    class Enemy {
+      constructor() {
+        this.x = path[0].x;
+        this.y = path[0].y;
+        this.speed = 1;
+        this.health = 3;
+        this.pathIndex = 0;
+      }
+
+      update() {
+        const target = path[this.pathIndex + 1];
+        const dx = target.x - this.x;
+        const dy = target.y - this.y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        const moveX = (dx / dist) * this.speed;
+        const moveY = (dy / dist) * this.speed;
+        this.x += moveX;
+        this.y += moveY;
+
+        if (dist < 3) this.pathIndex++;
+        if (this.pathIndex >= path.length - 1) {
+          lives--;
+          return false;
+        }
+
+        return true;
+      }
+
+      draw() {
+        ctx.fillStyle = "red";
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, 10, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    class Tower {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.range = 100;
+        this.fireRate = 60;
+        this.cooldown = 0;
+      }
+
+      update() {
+        if (this.cooldown > 0) {
+          this.cooldown--;
+          return;
+        }
+
+        for (let e of enemies) {
+          const dx = e.x - this.x;
+          const dy = e.y - this.y;
+          if (Math.sqrt(dx*dx + dy*dy) < this.range) {
+            projectiles.push(new Projectile(this.x, this.y, e));
+            this.cooldown = this.fireRate;
+            break;
+          }
+        }
+      }
+
+      draw() {
+        ctx.fillStyle = "yellow";
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, 10, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    class Projectile {
+      constructor(x, y, target) {
+        this.x = x;
+        this.y = y;
+        this.target = target;
+        this.speed = 5;
+      }
+
+      update() {
+        const dx = this.target.x - this.x;
+        const dy = this.target.y - this.y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        this.x += (dx / dist) * this.speed;
+        this.y += (dy / dist) * this.speed;
+
+        if (dist < 5) {
+          this.target.health--;
+          return false;
+        }
+
+        return true;
+      }
+
+      draw() {
+        ctx.fillStyle = "cyan";
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, 4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    function spawnWave() {
+      for (let i = 0; i < wave; i++) {
+        setTimeout(() => enemies.push(new Enemy()), i * 500);
+      }
+      wave++;
+    }
+
+    canvas.addEventListener('click', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      if (money >= 50) {
+        towers.push(new Tower(x, y));
+        money -= 50;
+      }
+    });
+
+    function gameLoop() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = "#fff";
+      ctx.fillText("Lives: " + lives + " | Money: $" + money + " | Wave: " + (wave - 1), 10, 20);
+
+      enemies = enemies.filter(e => e.update() && e.health > 0);
+      for (let e of enemies) e.draw();
+
+      for (let t of towers) {
+        t.update();
+        t.draw();
+      }
+
+      projectiles = projectiles.filter(p => p.update());
+      for (let p of projectiles) p.draw();
+
+      if (enemies.length === 0) spawnWave();
+
+      if (lives > 0) requestAnimationFrame(gameLoop);
+      else {
+        ctx.fillStyle = "white";
+        ctx.font = "30px Arial";
+        ctx.fillText("Game Over", canvas.width / 2 - 80, canvas.height / 2);
+      }
+    }
+
+    spawnWave();
+    gameLoop();
+  </script>
+</body>
+</html>
