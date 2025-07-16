@@ -52,7 +52,7 @@
 <body>
   <h1>High Noon Defense</h1>
 
-  <canvas id="gameCanvas" width="600" height="400"></canvas>
+  <canvas id="gameCanvas" width="800" height="500"></canvas>
 
   <button onclick="window.location.href='games.html'">← Back to Games</button>
 
@@ -60,28 +60,75 @@
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
 
-    function drawMap() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Define path (manually traced over the road)
+    const path = [
+      {x: 50, y: 300},
+      {x: 100, y: 280},
+      {x: 160, y: 250},
+      {x: 210, y: 240},
+      {x: 270, y: 200},
+      {x: 310, y: 180},
+      {x: 360, y: 160},
+      {x: 420, y: 170},
+      {x: 470, y: 200},
+      {x: 530, y: 240},
+      {x: 590, y: 260},
+      {x: 650, y: 300},
+      {x: 700, y: 320},
+      {x: 750, y: 350}
+    ];
 
-      // Sample towers
-      const towers = [
-        { x: 100, y: 100 },
-        { x: 200, y: 250 },
-        { x: 400, y: 100 },
-        { x: 300, y: 300 }
-      ];
+    class Enemy {
+      constructor() {
+        this.x = path[0].x;
+        this.y = path[0].y;
+        this.speed = 1.5;
+        this.pathIndex = 0;
+      }
 
-      towers.forEach(t => {
+      update() {
+        if (this.pathIndex < path.length - 1) {
+          const target = path[this.pathIndex + 1];
+          const dx = target.x - this.x;
+          const dy = target.y - this.y;
+          const dist = Math.sqrt(dx*dx + dy*dy);
+
+          if (dist < this.speed) {
+            this.x = target.x;
+            this.y = target.y;
+            this.pathIndex++;
+          } else {
+            this.x += (dx / dist) * this.speed;
+            this.y += (dy / dist) * this.speed;
+          }
+        }
+      }
+
+      draw() {
         ctx.beginPath();
-        ctx.arc(t.x, t.y, 10, 0, Math.PI * 2);
-        ctx.fillStyle = "blue";
+        ctx.arc(this.x, this.y, 8, 0, Math.PI * 2);
+        ctx.fillStyle = "red";
         ctx.fill();
-        ctx.strokeStyle = "#fff";
+        ctx.strokeStyle = "#000";
         ctx.stroke();
-      });
+      }
     }
 
-    drawMap();
+    const enemies = [new Enemy()];
+
+    function gameLoop() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Update & draw enemies
+      enemies.forEach(enemy => {
+        enemy.update();
+        enemy.draw();
+      });
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    gameLoop();
   </script>
 </body>
 </html>
