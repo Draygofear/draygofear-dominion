@@ -6,23 +6,45 @@
   <title>DraygoFear Dominion - Games</title>
   <style>
     body {
-      background-color: #111;
-      color: #fff;
-      font-family: 'Segoe UI', sans-serif;
       margin: 0;
-      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0d0d0d;
+      color: #fff;
       display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
-    .sidebar {
-      width: 15%;
-      padding: 20px;
+    .navbar {
       background-color: #1a1a1a;
+      padding: 15px;
+      text-align: center;
+      width: 100%;
+    }
+
+    .navbar a {
+      color: #fff;
+      margin: 0 15px;
+      text-decoration: none;
+      font-size: 18px;
+    }
+
+    .navbar a:hover {
+      color: #0ff;
+    }
+
+    .logo {
+      margin: 20px;
       text-align: center;
     }
 
-    .main-content {
-      width: 70%;
+    .logo img {
+      max-width: 300px;
+    }
+
+    .content {
+      max-width: 600px;
+      text-align: center;
       padding: 20px;
     }
 
@@ -45,57 +67,34 @@
       border-radius: 8px;
       box-shadow: 0 0 5px #000;
       cursor: pointer;
+      transition: background-color 0.3s;
     }
 
-    iframe {
-      border: 2px solid #333;
-      border-radius: 8px;
+    .cell:hover {
+      background-color: #444;
     }
 
-    .logo {
-      text-align: center;
-      margin: 20px auto;
-    }
-
-    .logo img {
-      max-height: 100px;
-    }
-
-    .navbar {
-      background-color: #222;
+    select, button {
       padding: 10px;
-      text-align: center;
-    }
-
-    .navbar a {
-      margin: 0 20px;
-      color: #fff;
-      text-decoration: none;
-      font-size: 18px;
-    }
-
-    .navbar a:hover {
-      color: #0ff;
+      margin-top: 10px;
+      font-size: 16px;
+      border-radius: 6px;
+      border: none;
     }
   </style>
 </head>
 <body>
-  <div class="sidebar">
-    <h3>AD SPACE</h3>
-    <p>[Insert Ad Code Here]</p>
+  <div class="navbar">
+    <a href="index.html">🏠 Home</a>
+    <a href="games.html">🎮 Games</a>
+    <a href="gamelinks.html">🔗 Game Links</a>
   </div>
 
-  <div class="main-content">
-    <div class="navbar">
-      <a href="index.html">🏠 Home</a>
-      <a href="games.html">🎮 Games</a>
-      <a href="gamelinks.html">🔗 Game Links</a>
-    </div>
+  <div class="logo">
+    <img src="logo.png" alt="DraygoFear Logo" />
+  </div>
 
-    <div class="logo">
-      <img src="logo.png" alt="DraygoFear Logo" />
-    </div>
-
+  <div class="content">
     <h2>Tic Tac Toe</h2>
     <select id="mode" onchange="resetGame()">
       <option value="2p">2 Player</option>
@@ -104,16 +103,6 @@
     </select>
     <div id="board" class="board"></div>
     <button onclick="resetGame()">Reset</button>
-
-    <hr style="margin: 40px auto; width: 50%; border: 1px solid #333;" />
-
-    <h2>Checkers (via Embed)</h2>
-    <iframe src="https://cardgames.io/embed/checkers/" width="100%" height="500px" title="Checkers"></iframe>
-  </div>
-
-  <div class="sidebar">
-    <h3>AD SPACE</h3>
-    <p>[Insert Ad Code Here]</p>
   </div>
 
   <script>
