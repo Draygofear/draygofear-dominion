@@ -45,6 +45,21 @@
       font-size: 18px;
       line-height: 1.6;
     }
+
+    .fade-in {
+      opacity: 0;
+      animation: fadeIn 1s ease forwards;
+    }
+
+    .fade-in:nth-of-type(1) { animation-delay: 0.5s; }
+    .fade-in:nth-of-type(2) { animation-delay: 1.5s; }
+    .fade-in:nth-of-type(3) { animation-delay: 2.5s; }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
+    }
   </style>
 </head>
 <body>
@@ -59,9 +74,9 @@
   </div>
 
   <div class="content">
-    <p>This isn't just another gaming site — it's a call to the fearless. To those who rise when others fall. To the ones who game not for glory, but for greatness.</p>
-    <p>Every click, every move, every moment here is yours to shape. Whether you're challenging the system or mastering your skills — this is your battlefield.</p>
-    <p>Welcome to DraygoFear Dominion. Prepare to dominate, inspire, and rewrite the rules.</p>
+    <p class="fade-in">This isn't just another gaming site — it's a call to the fearless. To those who rise when others fall. To the ones who game not for glory, but for greatness.</p>
+    <p class="fade-in">Every click, every move, every moment here is yours to shape. Whether you're challenging the system or mastering your skills — this is your battlefield.</p>
+    <p class="fade-in">Welcome to DraygoFear Dominion. Prepare to dominate, inspire, and rewrite the rules.</p>
   </div>
 </body>
 </html>
