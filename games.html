@@ -10,16 +10,12 @@
       font-family: 'Segoe UI', sans-serif;
       background-color: #0d0d0d;
       color: #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      text-align: center;
     }
 
     .navbar {
       background-color: #1a1a1a;
       padding: 15px;
-      text-align: center;
-      width: 100%;
     }
 
     .navbar a {
@@ -34,99 +30,61 @@
     }
 
     .logo {
-      margin: 20px;
-      text-align: center;
+      margin: 30px auto 10px;
     }
 
     .logo img {
       max-width: 300px;
     }
 
-    .main-wrapper {
-      display: flex;
-      justify-content: center;
-      width: 100%;
-      max-width: 1300px;
+    .game-section {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #1a1a1a;
+      border-radius: 10px;
+    }
+
+    .game-section h2 {
+      margin-bottom: 10px;
+    }
+
+    .game-section a.play-button {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 10px 20px;
+      background-color: #444;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 6px;
+      transition: background-color 0.3s ease;
+    }
+
+    .game-section a.play-button:hover {
+      background-color: #0ff;
+      color: #000;
     }
 
     .ad-column {
-      width: 150px;
-      min-height: 400px;
-      margin: 10px;
-      background-color: #1f1f1f;
-      border: 1px solid #444;
-      text-align: center;
+      position: fixed;
+      top: 0;
+      width: 120px;
+      height: 100%;
+      background-color: #111;
       padding: 10px;
-      box-shadow: 0 0 5px #000;
-    }
-
-    .ad-column p {
+      color: #888;
       font-size: 14px;
-      color: #aaa;
     }
 
-    .content {
-      flex: 1;
-      max-width: 600px;
-      padding: 20px;
-      text-align: center;
+    .ad-left {
+      left: 0;
     }
 
-    .board {
-      display: grid;
-      grid-template-columns: repeat(3, 100px);
-      gap: 8px;
-      justify-content: center;
-      margin: 20px 0;
+    .ad-right {
+      right: 0;
     }
 
-    .cell {
-      width: 100px;
-      height: 100px;
-      background-color: #333;
-      color: #fff;
-      font-size: 64px;
-      text-align: center;
-      line-height: 100px;
-      border-radius: 8px;
-      box-shadow: 0 0 5px #000;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-
-    .cell:hover {
-      background-color: #444;
-    }
-
-    select, button {
-      padding: 10px;
-      margin-top: 10px;
-      font-size: 16px;
-      border-radius: 6px;
-      border: none;
-    }
-
-    .firework {
-      position: absolute;
-      width: 10px;
-      height: 10px;
-      background: yellow;
-      border-radius: 50%;
-      animation: explode 1s ease-out forwards;
-      z-index: 9999;
-    }
-
-    @keyframes explode {
-      0% { transform: scale(1); opacity: 1; }
-      100% { transform: scale(5); opacity: 0; }
-    }
-
-    @media screen and (max-width: 768px) {
-      .main-wrapper {
-        flex-direction: column;
-        align-items: center;
-      }
-
+    @media (max-width: 900px) {
       .ad-column {
         display: none;
       }
@@ -134,6 +92,9 @@
   </style>
 </head>
 <body>
+  <div class="ad-column ad-left">Advertisement</div>
+  <div class="ad-column ad-right">Advertisement</div>
+
   <div class="navbar">
     <a href="index.html">🏠 Home</a>
     <a href="games.html">🎮 Games</a>
@@ -144,178 +105,15 @@
     <img src="logo.png" alt="DraygoFear Logo" />
   </div>
 
-  <div class="main-wrapper">
-    <div class="ad-column"><p>Your Ad Here</p></div>
-
-    <div class="content">
-      <h2>Tic Tac Toe</h2>
-      <select id="mode" onchange="resetGame()">
-        <option value="2p">2 Player</option>
-        <option value="easy">Vs Computer (Easy)</option>
-        <option value="hard">Vs Computer (Hard)</option>
-      </select>
-      <div id="board" class="board"></div>
-
-      <div style="margin-top: 20px;">
-        <strong>Scoreboard</strong>
-        <p>
-          🧑 Player Wins: <span id="xWins">0</span><br/>
-          🤖 AI Wins: <span id="oWins">0</span><br/>
-          🤝 Draws: <span id="draws">0</span>
-        </p>
-        <button onclick="resetGame()">Reset Game</button>
-        <button onclick="resetScores()">Reset Scores</button>
-      </div>
-    </div>
-
-    <div class="ad-column"><p>Your Ad Here</p></div>
+  <div class="game-section">
+    <h2>❌ Tic Tac Toe</h2>
+    <iframe src="tictactoe.html" width="100%" height="600" style="border:none;"></iframe>
   </div>
 
-  <script>
-    const board = document.getElementById('board');
-    let cells = Array(9).fill('');
-    let currentPlayer = 'X';
-    let mode = '2p';
-    let xWins = 0, oWins = 0, draws = 0;
-
-    document.getElementById('mode').addEventListener('change', (e) => {
-      mode = e.target.value;
-      resetGame();
-    });
-
-    function render() {
-      board.innerHTML = '';
-      cells.forEach((val, i) => {
-        const cell = document.createElement('div');
-        cell.className = 'cell';
-        cell.textContent = val;
-        cell.onclick = () => makeMove(i);
-        board.appendChild(cell);
-      });
-    }
-
-    function makeMove(index) {
-      if (cells[index] !== '') return;
-      cells[index] = currentPlayer;
-      render();
-      if (checkWinner(currentPlayer)) {
-        declareWinner(currentPlayer);
-        return;
-      }
-      if (cells.every(c => c)) {
-        declareDraw();
-        return;
-      }
-      currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-      if ((mode === 'easy' || mode === 'hard') && currentPlayer === 'O') {
-        setTimeout(() => mode === 'easy' ? aiEasy() : aiHard(), 200);
-      }
-    }
-
-    function aiEasy() {
-      let empty = cells.map((v, i) => v === '' ? i : null).filter(v => v !== null);
-      let choice = empty[Math.floor(Math.random() * empty.length)];
-      makeMove(choice);
-    }
-
-    function aiHard() {
-      let best = minimax(cells, 'O');
-      makeMove(best.index);
-    }
-
-    function minimax(newBoard, player) {
-      const huPlayer = 'X', aiPlayer = 'O';
-      const availSpots = newBoard.map((v, i) => v === '' ? i : null).filter(v => v !== null);
-      if (checkWinner(huPlayer, newBoard)) return { score: -10 };
-      if (checkWinner(aiPlayer, newBoard)) return { score: 10 };
-      if (availSpots.length === 0) return { score: 0 };
-
-      const moves = [];
-      for (let i = 0; i < availSpots.length; i++) {
-        let move = {};
-        move.index = availSpots[i];
-        newBoard[availSpots[i]] = player;
-        let result = minimax(newBoard, player === aiPlayer ? huPlayer : aiPlayer);
-        move.score = result.score;
-        newBoard[availSpots[i]] = '';
-        moves.push(move);
-      }
-
-      let bestMove = 0;
-      if (player === aiPlayer) {
-        let bestScore = -Infinity;
-        for (let i = 0; i < moves.length; i++) {
-          if (moves[i].score > bestScore) {
-            bestScore = moves[i].score;
-            bestMove = i;
-          }
-        }
-      } else {
-        let bestScore = Infinity;
-        for (let i = 0; i < moves.length; i++) {
-          if (moves[i].score < bestScore) {
-            bestScore = moves[i].score;
-            bestMove = i;
-          }
-        }
-      }
-      return moves[bestMove];
-    }
-
-    function checkWinner(p, b = cells) {
-      const win = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-      return win.some(comb => comb.every(i => b[i] === p));
-    }
-
-    function declareWinner(winner) {
-      if (winner === 'X') {
-        xWins++;
-        launchFireworks();
-      } else if (winner === 'O') {
-        oWins++;
-      }
-      updateScores();
-      setTimeout(() => alert(winner + ' wins!'), 100);
-    }
-
-    function declareDraw() {
-      draws++;
-      updateScores();
-      setTimeout(() => alert('Draw!'), 100);
-    }
-
-    function updateScores() {
-      document.getElementById('xWins').textContent = xWins;
-      document.getElementById('oWins').textContent = oWins;
-      document.getElementById('draws').textContent = draws;
-    }
-
-    function resetScores() {
-      xWins = 0;
-      oWins = 0;
-      draws = 0;
-      updateScores();
-    }
-
-    function resetGame() {
-      cells = Array(9).fill('');
-      currentPlayer = 'X';
-      render();
-    }
-
-    function launchFireworks() {
-      for (let i = 0; i < 15; i++) {
-        const firework = document.createElement('div');
-        firework.className = 'firework';
-        firework.style.left = Math.random() * window.innerWidth + 'px';
-        firework.style.top = Math.random() * window.innerHeight + 'px';
-        firework.style.background = `hsl(${Math.random() * 360}, 100%, 50%)`;
-        document.body.appendChild(firework);
-        setTimeout(() => firework.remove(), 1000);
-      }
-    }
-
-    render();
-  </script>
+  <div class="game-section">
+    <h2>🛡️ High Noon Defense</h2>
+    <p>Defend your turf in a wild west tower defense showdown!</p>
+    <a href="towerdefense.html" class="play-button">Play High Noon Defense</a>
+  </div>
 </body>
 </html>
