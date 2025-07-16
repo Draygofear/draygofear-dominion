@@ -11,13 +11,35 @@
       font-family: 'Segoe UI', sans-serif;
       margin: 0;
     }
+    .page-layout {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 20px;
+    }
+    .ad-column {
+      flex: 1 1 150px;
+      max-width: 150px;
+      background: #1b1b2e;
+      border: 1px solid #333;
+      margin: 10px;
+      padding: 10px;
+      text-align: center;
+      font-size: 14px;
+      color: #00f0ff;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.1);
+    }
+    .game-area {
+      flex: 3 1 600px;
+      max-width: 720px;
+      margin: 10px;
+    }
     .game-container {
       display: flex;
       flex-wrap: wrap;
       gap: 40px;
       justify-content: center;
-      margin: 30px auto;
-      max-width: 1200px;
+      margin: 0 auto;
     }
     .game {
       border: 2px solid #555;
@@ -87,6 +109,7 @@
     }
     h2, h3 {
       color: #00f0ff;
+      text-align: center;
     }
   </style>
 </head>
@@ -101,6 +124,8 @@
     </nav>
   </header>  <main>
     <h2>Games</h2>
+    <div class="page-layout">
+      <div class="ad-column">AD SPACE</div><div class="game-area">
     <div class="game-container">
       <div class="game tic-tac-toe">
         <h3>Tic Tac Toe</h3>
@@ -112,14 +137,19 @@
         <div class="board" id="ticBoard"></div>
         <p id="ticStatus"></p>
         <button onclick="resetTicTacToe()">Reset</button>
-      </div><div class="game checkers">
-    <h3>Checkers (Demo)</h3>
-    <div class="board" id="checkersBoard"></div>
+      </div>
+
+      <div class="game checkers">
+        <h3>Checkers (Demo)</h3>
+        <div class="board" id="checkersBoard"></div>
+      </div>
+    </div>
   </div>
+
+  <div class="ad-column">AD SPACE</div>
 </div>
 
   </main>  <script>
-    // TIC TAC TOE WITH AI MODE
     const ticBoard = document.getElementById('ticBoard');
     const ticStatus = document.getElementById('ticStatus');
     const modeSelect = document.getElementById('mode');
@@ -199,7 +229,6 @@
     modeSelect.addEventListener('change', resetTicTacToe);
     renderTicBoard();
 
-    // SIMPLE CHECKERS BOARD
     const checkersBoard = document.getElementById('checkersBoard');
     for (let i = 0; i < 64; i++) {
       const cell = document.createElement('div');
